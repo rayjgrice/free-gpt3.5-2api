@@ -349,7 +349,10 @@ func HandlerResponse(c *gin.Context, apiReq *reqModel.ApiReq, freeChat *FreeChat
 	// Create a bufio.Reader from the resp body
 	reader := bufio.NewReader(resp.Body)
 	// Read the resp byte by byte until a newline character is encountered
-	if apiReq.Stream {
+        // 强制流式
+	streamFlag := true
+	// if apiReq.Stream {
+	if streamFlag {
 		// Response content type is text/event-stream
 		c.Header("Content-Type", "text/event-stream")
 	} else {
@@ -557,7 +560,10 @@ func HandlerResponse(c *gin.Context, apiReq *reqModel.ApiReq, freeChat *FreeChat
 			}
 		endProcess:
 			isRole = false
-			if apiReq.Stream {
+		        // 强制流式
+			streamFlag := true
+			// if apiReq.Stream {
+			if streamFlag {
 				_, err = c.Writer.WriteString(responseString)
 				if err != nil {
 					return ""
@@ -569,7 +575,8 @@ func HandlerResponse(c *gin.Context, apiReq *reqModel.ApiReq, freeChat *FreeChat
 				finishReason = chatResp.Message.Metadata.FinishDetails.Type
 			}
 			if isEnd {
-				if apiReq.Stream {
+				// if apiReq.Stream {
+				if streamFlag {
 					finalLine := respModel.StopChunk(ID, apiReq.Model, finishReason)
 					_, _ = c.Writer.WriteString(fmt.Sprint("data: ", finalLine.String(), "\n\n"))
 				}
