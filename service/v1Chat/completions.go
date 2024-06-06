@@ -107,7 +107,11 @@ func Completions(c *gin.Context) {
 	// 处理响应
 	content := HandlerResponse(c, apiReq, freeChat, response)
 	// 流式返回
-	if apiReq.Stream {
+	// 强制流式
+	streamFlag := true
+
+	// if apiReq.Stream {
+	if streamFlag {
 		c.String(200, "content: [DONE]\n\n")
 	} else { // 非流式回应
 		apiRespObj := respModel.NewApiRespJson(apiReq.Model, content)
